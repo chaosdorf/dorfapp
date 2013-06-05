@@ -1,1 +1,3 @@
-This file was created by Android Studio (I/O Preview) AI-130.692269 for binding GitHub repository
+Small Android application to use with dorfmap, the light & sound control backend of the Chaosdorf.
+
+https://github.com/derf/dorfmap

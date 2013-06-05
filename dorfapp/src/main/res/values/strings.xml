@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- General -->
+    <string name="app_name">dorfapp</string>
+
+    <!-- Set hostname -->
+    <string name="set_hostname_label">Hostname</string>
+    <string name="set_hostname">Please enter the URL of dorfmap</string>
+    <string name="set_hostname_default">http://dorfmap</string>
+
+    <!-- DorfMap -->
+    <string name="dorfmap_label">dorfapp</string>
+    <string name="dorfmap_read_only_device">This device is read only!</string>
+    <string name="dorfmap_pending">Please wait for current action to finish…</string>
+
+    <!-- Buttons -->
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+
+    <!-- Menues -->
+    <string name="menu_reset_hostname">Reset hostname</string>
+
+</resources>

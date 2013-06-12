@@ -11,8 +11,11 @@
 
     <!-- DorfMap -->
     <string name="dorfmap_label">dorfapp</string>
-    <string name="dorfmap_read_only_device">This device is read only!</string>
+    <string name="dorfmap_read_only_device">The device \"%s\" is read only!</string>
     <string name="dorfmap_pending">Please wait for current action to finish…</string>
+
+    <!-- Blinkenlight -->
+    <string name="blinkenlight_label">blinkenlight</string>
 
     <!-- Buttons -->
     <string name="save">Save</string>

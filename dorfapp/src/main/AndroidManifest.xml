@@ -36,6 +36,11 @@
                 android:label="@string/dorfmap_label">
         </activity>
 
+        <activity
+                android:name="de.chaosdorf.dorfapp.Blinkenlight"
+                android:label="@string/blinkenlight_label">
+        </activity>
+
     </application>
 
 </manifest>

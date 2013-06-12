@@ -8,12 +8,12 @@ public enum Type
 	LIGHT_READONLY("light_ro", "light", Group.LIGHT),
 	SERVER("server", "server", Group.SERVER),
 	AMPLIFIER("amp", "amp", Group.AMPLIFIER),
-	BLINKENLIGHT("blinkenlight", "blinkenlight", Group.LIGHT),
+	BLINKENLIGHT("blinkenlight", "blinkenlight", Group.BLINKENLIGHT),
 	INFOAREA("infoarea", "", Group.NOTHING),
 	PRINTER("printer", "printer", Group.PRINTER),
 	TEXT("rtext", "", Group.NOTHING),
 	WIFI("wifi", "wifi", Group.WIFI),
-	DOOR("door", "", Group.NOTHING),
+	DOOR("door", "server", Group.DOOR),
 	PHONE("phone", "phone", Group.PHONE);
 
 	final String type;

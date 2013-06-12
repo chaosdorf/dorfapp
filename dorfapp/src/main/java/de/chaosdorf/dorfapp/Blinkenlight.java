@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-public class MainActivity extends Activity
+public class Blinkenlight extends Activity
 {
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -16,19 +16,9 @@ public class MainActivity extends Activity
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		final String hostname = prefs.getString("hostname", null);
 
-		if (hostname == null)
-		{
-			// Set hostname if not done yet
-			Intent intent = new Intent(this, SetHostname.class);
-			startActivity(intent);
-			finish();
-		}
-		else
-		{
-			// Show us the dorfmap, please
-			Intent intent = new Intent(this, DorfMap.class);
-			startActivity(intent);
-			finish();
-		}
+		// For now just return to the main activity
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+		finish();
 	}
 }

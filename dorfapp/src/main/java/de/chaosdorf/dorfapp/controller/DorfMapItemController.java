@@ -24,7 +24,8 @@ public class DorfMapItemController
 			{
 				final String dorfMapItemname = dorfMapItemsNames.getString(i);
 				final DorfMapItem dorfMapItem = parseDorfMapItemFromJSONObject(dorfMapItemname, dorfMapItems.getJSONObject(dorfMapItemname));
-				if (dorfMapItem != null && dorfMapItem.getGroup() != Group.NOTHING)
+				// Add all existing items which are not in group NOTHING and are not an amplifier which ends with "b"
+				if (dorfMapItem != null && dorfMapItem.getGroup() != Group.NOTHING && (dorfMapItem.getGroup() != Group.AMPLIFIER || !dorfMapItemname.endsWith("b")))
 				{
 					list.add(dorfMapItem);
 				}

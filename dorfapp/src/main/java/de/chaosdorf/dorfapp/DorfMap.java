@@ -120,6 +120,7 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 					new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_UPDATE_UI, hostname + "get/" + switchingDorfMapItem.get().getName()).execute();
 					break;
 
+				// Update icon of toggled dorfMapItem
 				case DORFMAP_UPDATE_UI:
 					switchingDorfMapItem.get().setStatus(json);
 					dorfMapItemAdapter.notifyDataSetChanged();
@@ -141,11 +142,21 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 		final DorfMapItem dorfMapItem = (DorfMapItem) listView.getAdapter().getItem(index);
 		if (dorfMapItem != null)
 		{
-			if (dorfMapItem.getGroup() == Group.NOTHING)
+			// Read-only dorfMapItem
+			if (!dorfMapItem.isWriteable())
 			{
-				Utility.displayToastMessage(activity, getResources().getString(R.string.dorfmap_read_only_device));
+				Utility.displayToastMessage(activity, getResources().getString(R.string.dorfmap_read_only_device).replace("%s", dorfMapItem.getName()));
 				return;
 			}
+			// Special activity for blinkenlight
+			if (dorfMapItem.getGroup() == Group.BLINKENLIGHT)
+			{
+				Intent intent = new Intent(view.getContext(), Blinkenlight.class);
+				startActivity(intent);
+				finish();
+				return;
+			}
+			// Normal writable dorfMapItem
 			if (isSwitching.compareAndSet(false, true))
 			{
 				switchingDorfMapItem.set(dorfMapItem);

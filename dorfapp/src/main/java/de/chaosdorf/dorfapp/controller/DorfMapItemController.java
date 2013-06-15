@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import de.chaosdorf.dorfapp.model.DorfMapItem;
@@ -15,6 +16,7 @@ public class DorfMapItemController
 {
 	public static List<DorfMapItem> parseAllDorfMapItemsFromJSON(String json)
 	{
+		final HashSet<String> areas = new HashSet<String>();
 		final List<DorfMapItem> list = new ArrayList<DorfMapItem>();
 		try
 		{
@@ -28,6 +30,13 @@ public class DorfMapItemController
 				if (dorfMapItem != null && dorfMapItem.getGroup() != Group.NOTHING && (dorfMapItem.getGroup() != Group.AMPLIFIER || !dorfMapItemname.endsWith("b")))
 				{
 					list.add(dorfMapItem);
+				}
+				// Check if we already have an area entry for a light
+				final String area = dorfMapItem.getArea();
+				if (dorfMapItem.getGroup() == Group.LIGHT && area != null && !areas.contains(area))
+				{
+					areas.add(dorfMapItem.getArea());
+					list.add(new DorfMapItem("", "", area, false, false, "-1", Type.AREA));
 				}
 			}
 			return list;
@@ -44,6 +53,8 @@ public class DorfMapItemController
 		{
 			return new DorfMapItem(
 					dorfMapItemname,
+					jsonObject.getString("desc"),
+					jsonObject.getString("area"),
 					jsonObject.getInt("is_readable") > 0,
 					jsonObject.getInt("is_writable") > 0,
 					jsonObject.getString("status"),

@@ -13,8 +13,9 @@ public enum Type
 	PRINTER("printer", "printer", Group.PRINTER),
 	TEXT("rtext", "", Group.NOTHING),
 	WIFI("wifi", "wifi", Group.WIFI),
-	DOOR("door", "server", Group.DOOR),
-	PHONE("phone", "phone", Group.PHONE);
+	DOOR("door", "door", Group.DOOR),
+	PHONE("phone", "phone", Group.PHONE),
+	AREA("area", "area", Group.LIGHT);
 
 	final String type;
 	final String iconName;
@@ -54,7 +55,7 @@ public enum Type
 
 	public String getIconName(final String status)
 	{
-		if (this == BLINKENLIGHT)
+		if (this == BLINKENLIGHT || this == AREA)
 		{
 			return iconName;
 		}

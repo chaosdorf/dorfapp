@@ -117,7 +117,7 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 
 				// Update toggled dorfMapItem
 				case DORFMAP_TOGGLE:
-					new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_UPDATE_UI, hostname + "get/" + switchingDorfMapItem.get().getName()).execute();
+					new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_UPDATE_UI, hostname + "get/" + switchingDorfMapItem.get().getId()).execute();
 					break;
 
 				// Update icon of toggled dorfMapItem
@@ -160,7 +160,7 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 			if (isSwitching.compareAndSet(false, true))
 			{
 				switchingDorfMapItem.set(dorfMapItem);
-				new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_TOGGLE, hostname + "toggle/" + dorfMapItem.getName()).execute();
+				new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_TOGGLE, hostname + "toggle/" + dorfMapItem.getId()).execute();
 			}
 		}
 	}
@@ -212,7 +212,15 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 			{
 				return compare;
 			}
-			return dorfMapItem.getName().compareToIgnoreCase(dorfMapItem2.getName());
+			if (dorfMapItem.getArea() != null)
+			{
+				compare = dorfMapItem.getArea().compareToIgnoreCase(dorfMapItem2.getArea());
+				if (compare != 0)
+				{
+					return compare;
+				}
+			}
+			return dorfMapItem.getId().compareToIgnoreCase(dorfMapItem2.getId());
 		}
 	}
 }

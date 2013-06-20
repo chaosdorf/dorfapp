@@ -4,5 +4,5 @@ public interface LongRunningIOCallback
 {
 	public void displayErrorMessage(final String message);
 
-	public void processIOResult(final LongRunningIOTask task, final String json);
+	public void processIOResult(final LongRunningDorfMapItemIOTask task, final String json);
 }

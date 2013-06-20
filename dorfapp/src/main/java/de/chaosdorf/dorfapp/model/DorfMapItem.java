@@ -9,6 +9,7 @@ public class DorfMapItem
 	final boolean isWriteable;
 	String status;
 	final Type type;
+	boolean pending;
 
 	public DorfMapItem(final String id, final String desc, final String area, final boolean readable, final boolean writeable, final String status, final Type type)
 	{
@@ -19,6 +20,7 @@ public class DorfMapItem
 		this.isWriteable = writeable;
 		this.status = status;
 		this.type = type;
+		this.pending = false;
 	}
 
 	public String getId()
@@ -44,24 +46,9 @@ public class DorfMapItem
 		return area;
 	}
 
-	public boolean isReadable()
-	{
-		return isReadable;
-	}
-
 	public boolean isWriteable()
 	{
 		return isWriteable;
-	}
-
-	public String getStatus()
-	{
-		return status;
-	}
-
-	public Type getType()
-	{
-		return type;
 	}
 
 	public void setStatus(final String status)
@@ -77,5 +64,15 @@ public class DorfMapItem
 	public Group getGroup()
 	{
 		return type.getGroup();
+	}
+
+	public boolean isPending()
+	{
+		return pending;
+	}
+
+	public void setPending(boolean pending)
+	{
+		this.pending = pending;
 	}
 }

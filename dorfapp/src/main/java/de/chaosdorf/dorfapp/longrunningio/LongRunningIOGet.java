@@ -15,13 +15,13 @@ import org.apache.http.util.EntityUtils;
 public class LongRunningIOGet extends AsyncTask<Void, Void, String>
 {
 	private final LongRunningIOCallback callback;
-	private final LongRunningIOTask id;
+	private final LongRunningDorfMapItemIOTask task;
 	private final String url;
 
-	public LongRunningIOGet(final LongRunningIOCallback callback, final LongRunningIOTask id, final String url)
+	public LongRunningIOGet(final LongRunningIOCallback callback, final LongRunningDorfMapItemIOTask task, final String url)
 	{
 		this.callback = callback;
-		this.id = id;
+		this.task = task;
 		this.url = url;
 	}
 
@@ -47,6 +47,6 @@ public class LongRunningIOGet extends AsyncTask<Void, Void, String>
 	@Override
 	protected void onPostExecute(String result)
 	{
-		callback.processIOResult(id, result);
+		callback.processIOResult(task, result);
 	}
 }

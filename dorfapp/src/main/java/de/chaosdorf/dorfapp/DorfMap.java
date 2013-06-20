@@ -19,11 +19,12 @@ import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Set;
 
 import de.chaosdorf.dorfapp.controller.DorfMapItemController;
+import de.chaosdorf.dorfapp.longrunningio.LongRunningDorfMapItemIOTask;
 import de.chaosdorf.dorfapp.longrunningio.LongRunningIOCallback;
 import de.chaosdorf.dorfapp.longrunningio.LongRunningIOGet;
 import de.chaosdorf.dorfapp.longrunningio.LongRunningIOTask;
@@ -33,8 +34,7 @@ import de.chaosdorf.dorfapp.util.Utility;
 
 public class DorfMap extends Activity implements LongRunningIOCallback, AdapterView.OnItemClickListener
 {
-	private final AtomicBoolean isSwitching = new AtomicBoolean(false);
-	private final AtomicReference<DorfMapItem> switchingDorfMapItem = new AtomicReference<DorfMapItem>(null);
+	private final Set<DorfMapItem> pendingDorfMapItems = Collections.synchronizedSet(new HashSet<DorfMapItem>());
 
 	private Activity activity;
 	private String hostname;
@@ -53,7 +53,7 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 
 		hostname = prefs.getString("hostname", null);
 
-		new LongRunningIOGet(this, LongRunningIOTask.GET_LIST_ALL, hostname + "list/all.json").execute();
+		new LongRunningIOGet(this, new LongRunningDorfMapItemIOTask(LongRunningIOTask.GET_LIST_ALL, null), hostname + "list/all.json").execute();
 	}
 
 	@Override
@@ -97,11 +97,11 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 	}
 
 	@Override
-	public void processIOResult(final LongRunningIOTask task, final String json)
+	public void processIOResult(final LongRunningDorfMapItemIOTask task, final String json)
 	{
 		if (json != null)
 		{
-			switch (task)
+			switch (task.getLongRunningIOTask())
 			{
 				// Parse user data
 				case GET_LIST_ALL:
@@ -117,15 +117,15 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 
 				// Update toggled dorfMapItem
 				case DORFMAP_TOGGLE:
-					new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_UPDATE_UI, hostname + "get/" + switchingDorfMapItem.get().getId()).execute();
+					new LongRunningIOGet(this, new LongRunningDorfMapItemIOTask(LongRunningIOTask.DORFMAP_UPDATE_UI, task.getDorfMapItem()), hostname + "get/" + task.getDorfMapItem().getId()).execute();
 					break;
 
 				// Update icon of toggled dorfMapItem
 				case DORFMAP_UPDATE_UI:
-					switchingDorfMapItem.get().setStatus(json);
+					task.getDorfMapItem().setPending(false);
+					task.getDorfMapItem().setStatus(json);
 					dorfMapItemAdapter.notifyDataSetChanged();
-					switchingDorfMapItem.set(null);
-					isSwitching.set(false);
+					pendingDorfMapItems.remove(task.getDorfMapItem());
 					break;
 			}
 		}
@@ -134,12 +134,21 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 	@Override
 	public void onItemClick(final AdapterView<?> adapterView, final View view, final int index, final long l)
 	{
-		if (index < 0 || isSwitching.get())
+		DorfMapItem dorfMapItem = null;
+		boolean showErrorMessage = (index < 0);
+		if (!showErrorMessage)
+		{
+			dorfMapItem = (DorfMapItem) listView.getAdapter().getItem(index);
+			if (pendingDorfMapItems.contains(dorfMapItem))
+			{
+				showErrorMessage = true;
+			}
+		}
+		if (showErrorMessage)
 		{
 			Utility.displayToastMessage(activity, getResources().getString(R.string.dorfmap_pending));
 			return;
 		}
-		final DorfMapItem dorfMapItem = (DorfMapItem) listView.getAdapter().getItem(index);
 		if (dorfMapItem != null)
 		{
 			// Read-only dorfMapItem
@@ -157,10 +166,11 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 				return;
 			}
 			// Normal writable dorfMapItem
-			if (isSwitching.compareAndSet(false, true))
+			if (pendingDorfMapItems.add(dorfMapItem))
 			{
-				switchingDorfMapItem.set(dorfMapItem);
-				new LongRunningIOGet(this, LongRunningIOTask.DORFMAP_TOGGLE, hostname + "toggle/" + dorfMapItem.getId()).execute();
+				dorfMapItem.setPending(true);
+				dorfMapItemAdapter.notifyDataSetChanged();
+				new LongRunningIOGet(this, new LongRunningDorfMapItemIOTask(LongRunningIOTask.DORFMAP_TOGGLE, dorfMapItem), hostname + "toggle/" + dorfMapItem.getId()).execute();
 			}
 		}
 	}
@@ -190,12 +200,20 @@ public class DorfMap extends Activity implements LongRunningIOCallback, AdapterV
 			}
 
 			final DorfMapItem dorfMapItem = dorfMapItemList.get(position);
-			final int dorfMapItemIconID = getResources().getIdentifier(dorfMapItem.getIconName(), "drawable", getPackageName());
 			final ImageView icon = (ImageView) view.findViewById(R.id.icon);
 			final TextView label = (TextView) view.findViewById(R.id.label);
+			int dorfMapItemIconID = getResources().getIdentifier(dorfMapItem.getIconName(), "drawable", getPackageName());
+			if (dorfMapItem.isPending())
+			{
+				dorfMapItemIconID = android.R.drawable.stat_notify_sync;
+			}
+			else if (dorfMapItemIconID == 0)
+			{
+				dorfMapItemIconID = android.R.drawable.ic_menu_search;
+			}
 
 			icon.setContentDescription(dorfMapItem.getName());
-			icon.setImageResource(dorfMapItemIconID > 0 ? dorfMapItemIconID : android.R.drawable.ic_menu_search);
+			icon.setImageResource(dorfMapItemIconID);
 			label.setText(dorfMapItem.getName());
 
 			return view;

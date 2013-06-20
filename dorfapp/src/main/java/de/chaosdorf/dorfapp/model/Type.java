@@ -28,16 +28,6 @@ public enum Type
 		this.group = group;
 	}
 
-	public String getType()
-	{
-		return type;
-	}
-
-	public Group getGroup()
-	{
-		return group;
-	}
-
 	public static Type fromString(String typeName)
 	{
 		if (typeName != null)
@@ -51,6 +41,16 @@ public enum Type
 			}
 		}
 		return UNKOWN;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public Group getGroup()
+	{
+		return group;
 	}
 
 	public String getIconName(final String status)

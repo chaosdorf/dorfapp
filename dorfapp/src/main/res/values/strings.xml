@@ -16,6 +16,9 @@
 
     <!-- Blinkenlight -->
     <string name="blinkenlight_label">blinkenlight</string>
+    <string name="settings_bg_color_dialog">Pick a color</string>
+    <string name="settings_default_color_confirm">Set Default</string>
+    <string name="settings_bg_color_confirm">Set color</string>
 
     <!-- Buttons -->
     <string name="save">Save</string>
